@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+autopep8 = "*"
+
+[packages]
+flask-cors = "*"
+flask-restful = "==0.3.8"
+flask = "==1.1.2"
+flask-sqlalchemy = "==2.4.1"
+flask-migrate = "==2.5.3"
+flask-jwt-extended = "==3.24.1"
+flask-bcrypt = "==0.7.1C:/Users/felip/.virtualenvs/api-jwt_flask-1t0A9Bto/Scripts/python.exe"
+psycopg2 = "*"
+
+[requires]
+python_version = "3.7"
