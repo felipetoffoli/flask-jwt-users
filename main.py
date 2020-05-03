@@ -13,5 +13,4 @@ def shell_context():
         db=db,
         User=User
     )
-
 app.run(debug=True)

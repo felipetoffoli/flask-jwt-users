@@ -6,7 +6,6 @@ class Config:
 
 class Dev(Config):
     Debug=True
-    API_PREFIX='/api/v1'
     JWT_TOKEN_LOCATION='headers'
 
 class Prod(Config):
@@ -18,5 +17,6 @@ class Test(Config):
 
 config = {
     'dev': Dev,
-    'prod': Prod
+    'prod': Prod,
+    'test': Test
 }

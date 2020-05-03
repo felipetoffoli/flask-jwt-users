@@ -14,6 +14,22 @@ class UserRepository:
             return {'message': 'Pesquisa realizada com sucesso', 'data': data, 'erro': False}
         except Exception as e:
             return {'message': 'Não foi possivel realizar a pesquisa.', 'data': False, 'erro': True, 'Exeption': str(e)}
+    
+    def get_by_username(self, username):
+        try:
+            users = User.query.filter_by(username=username).first()
+            data = marshal(users, users_fields)
+            return {'message': 'Pesquisa realizada com sucesso', 'data': data, 'erro': False}
+        except Exception as e:
+            return {'message': 'Não foi possivel realizar a pesquisa.', 'data': False, 'erro': True, 'Exeption': str(e)}
+
+    def get_by_id(self, _id):
+        try:
+            users = User.query.get(_id).first()
+            data = marshal(users, users_fields)
+            return {'message': 'Pesquisa realizada com sucesso', 'data': data, 'erro': False}
+        except Exception as e:
+            return {'message': 'Não foi possivel realizar a pesquisa.', 'data': False, 'erro': True, 'Exeption': str(e)}
 
     def create(self, username, password, is_admin):
         try:
@@ -31,6 +47,8 @@ class UserRepository:
     def get_by_id(self, _id):
         try:
             user = User.query.get(_id)
+            if not user:
+                return {'message': 'Usuario não existe', 'data': False, 'error': True, 'Exeption': False}
             data =  marshal(user, users_fields)
             return {'message': 'Pesquisa realizada com sucesso', 'data': data, 'erro': False}
         except Exception as e:
@@ -40,7 +58,7 @@ class UserRepository:
         try:
             user = User.query.get(_id)
             if not user:
-                return {'message': 'Usuario não existe', 'data': False, 'error': True}
+                return {'message': 'Usuario não existe', 'data': False, 'error': True, 'Exeption': False}
             bcrypt = Bcrypt(current_app)
             user.username = username
             user.password = bcrypt.generate_password_hash(password)

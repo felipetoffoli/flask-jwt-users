@@ -7,8 +7,9 @@ from flask import current_app
 from flask_bcrypt import Bcrypt
 import datetime
 
-class AuthHandler:
 
+class AuthHandler:
+    
     def post(self):
         playload = request.json
         username = playload.get('username')
@@ -21,9 +22,7 @@ class AuthHandler:
         print(username, password)
         crypt_password =  bcrypt.generate_password_hash(password)
 
-        user = User.query.filter_by(username=username).first()
-
-        
+        user = User.query.filter_by(username=username).first()     
         if not user and bcrypt.check_password_hash(crypt_password, password):
             return {'message': 'Credenciais incorretas'}
         

@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_jwt_extended import  JWTManager
 
+
 db = SQLAlchemy()
 
 def create_app(config_name):
@@ -12,7 +13,6 @@ def create_app(config_name):
     api = Api(app)
     db.init_app(app)
     JWTManager(app)
-    
 
     # imports
     from src.controller.userController import controller_user
@@ -21,4 +21,3 @@ def create_app(config_name):
     app.register_blueprint(controller_auth)
 
     return app
-

@@ -9,33 +9,45 @@ from src.repository.user.userRepository import UserRepository
 
 class UserHandler:
 
+
     def get_all_users(self):
         user = UserRepository()
         users = user.get_all()
         return users
+    
+    def get_by_username(self, username):
+        repository = UserRepository()
+        user = repository.get_by_username(username)
+        return user
 
+    def get_by_id(self, _id):
+        repository = UserRepository()
+        user = repository.get_by_id(_id)
+        return user
 
+    
     def create_user(self):
         playload = request.json
         username = playload.get('username')
         password = playload.get('password')
         is_admin = playload.get('is_admin')
-
+        if not(username and password and type(is_admin) == bool):
+            return {'message': 'Envie todos parametros obrigatorios', 'error': True, 'data': False}
         user = UserRepository()
         new_user = user.create(username, password, is_admin)
         return new_user
 
-    def update_user(self):
+    def update_user(self):  
         playload = request.json
         username = playload.get('username')
         password = playload.get('password')
         is_admin = playload.get('is_admin')
         _id = playload.get('id')
-        
+        if not(username and password and type(is_admin) == bool and type(_id) == int):
+            return {'message': 'Envie todos parametros obrigatorios', 'error': True, 'data': False}
         repository = UserRepository()
         user = repository.update(_id, username, password, is_admin)
         return user
-
 
     def delete_user(self):
         playload = request.json
