@@ -6,6 +6,7 @@ from flask_jwt_extended import create_access_token
 from flask import current_app
 from flask_bcrypt import Bcrypt
 import datetime
+from src.infra.model.resultModel import ResultModel
 
 
 class AuthHandler:
@@ -16,7 +17,7 @@ class AuthHandler:
         password = playload.get('password')
         
         if not (username and password):
-            return {'message': 'Informe usuario e senha'}
+            return ResultModel('Informe usuario e senha.', False, True).to_dict(), 406
 
         bcrypt = Bcrypt(current_app)
         print(username, password)
@@ -24,7 +25,7 @@ class AuthHandler:
 
         user = User.query.filter_by(username=username).first()     
         if not user and bcrypt.check_password_hash(crypt_password, password):
-            return {'message': 'Credenciais incorretas'}
+            return ResultModel('Credenciais incorretas.', False, True).to_dict(), 406
         
         data = {
             'id': user.id,
@@ -34,4 +35,4 @@ class AuthHandler:
         
         expires = datetime.timedelta(days=30)
         token = create_access_token(identity=user.username, expires_delta=expires, user_claims=data)
-        return {'access_token': token}, 201
+        return ResultModel('Sucesso na geração do token.', token, False).to_dict(), 201

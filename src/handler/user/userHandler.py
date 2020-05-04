@@ -5,11 +5,9 @@ from src.model.schemas.users import users_fields
 from flask_bcrypt import Bcrypt
 from flask import current_app
 from src.repository.user.userRepository import UserRepository
-
+from src.infra.model.resultModel import ResultModel
 
 class UserHandler:
-
-
     def get_all_users(self):
         user = UserRepository()
         users = user.get_all()
@@ -32,7 +30,7 @@ class UserHandler:
         password = playload.get('password')
         is_admin = playload.get('is_admin')
         if not(username and password and type(is_admin) == bool):
-            return {'message': 'Envie todos parametros obrigatorios', 'error': True, 'data': False}
+            return ResultModel('Envie todos parametros obrigatorios.', False, True).to_dict(), 406
         user = UserRepository()
         new_user = user.create(username, password, is_admin)
         return new_user
@@ -44,7 +42,7 @@ class UserHandler:
         is_admin = playload.get('is_admin')
         _id = playload.get('id')
         if not(username and password and type(is_admin) == bool and type(_id) == int):
-            return {'message': 'Envie todos parametros obrigatorios', 'error': True, 'data': False}
+            return ResultModel('Envie todos parametros obrigatorios.', False, True).to_dict(), 406
         repository = UserRepository()
         user = repository.update(_id, username, password, is_admin)
         return user
@@ -52,6 +50,8 @@ class UserHandler:
     def delete_user(self):
         playload = request.json
         _id = playload.get('id')
+        if not(_id):
+            return ResultModel('O parametro "id" é obrigatorio.', False, True).to_dict(), 406
 
         repository = UserRepository()
         user = repository.delete(_id)
