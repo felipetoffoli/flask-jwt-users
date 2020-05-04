@@ -39,12 +39,14 @@ def post():
 
 @controller_user.route('/user', methods=['PUT'])
 @jwt.admin_required
+@validity_req.body_is_json
 def put():
     user = UserHandler()
     return user.update_user()
 
 @controller_user.route('/user', methods=['DELETE'])
 @jwt.admin_required
+@validity_req.body_is_json
 def delete():
     user = UserHandler()
     return user.delete_user()
