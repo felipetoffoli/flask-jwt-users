@@ -3,11 +3,12 @@ from src import db
 from flask_bcrypt import Bcrypt
 from flask import current_app
 from flask_restful import marshal
-from src.model.schemas.users import users_fields
+from src.model.schemas.users import users_fields, users_fields_with_pass
 from src.infra.model.resultModel import ResultModel
 
 
 class UserRepository:
+    
 
     def get_all(self):
         try:
@@ -17,10 +18,14 @@ class UserRepository:
         except Exception as e:
             return ResultModel('Não foi possivel realizar a pesquisa.', False, True, str(e)).to_dict()
 
-    def get_by_username(self, username):
+    def get_by_username(self, username, witch_password=False):
         try:
+            schemas_user = users_fields
+            if witch_password:
+                schemas_user = users_fields_with_pass
+        
             users = User.query.filter_by(username=username).first()
-            data = marshal(users, users_fields)
+            data = marshal(users, schemas_user)
             return ResultModel('Pesquisa realizada com sucesso.', data, False).to_dict()
         except Exception as e:
             return ResultModel('Não foi possivel realizar a pesquisa.', False, True, str(e)).to_dict()
@@ -62,8 +67,10 @@ class UserRepository:
                 return ResultModel('Usuario não existe.', False, True).to_dict()
             bcrypt = Bcrypt(current_app)
             user.username = username
-            user.password = bcrypt.generate_password_hash(password)
+            user.password = bcrypt.generate_password_hash(password).decode('utf8')
             user.is_admin = is_admin
+            db.session.add(user)
+            db.session.commit()
             data = marshal(user, users_fields)
             return ResultModel('Usuario atualizado com sucesso.', data, False).to_dict()
         except Exception as e:

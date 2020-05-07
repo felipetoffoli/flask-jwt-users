@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint
 from src.handler.auth.login import AuthHandler
 from src.infra.decorator.request.errorsRequestDecorator import ErrorsRequestDecorator
 

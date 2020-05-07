@@ -15,8 +15,10 @@ def create_app(config_name):
     JWTManager(app)
 
     # imports
+    from src.controller.indexController import controller_index
     from src.controller.userController import controller_user
     from src.controller.authController import controller_auth
+    app.register_blueprint(controller_index)
     app.register_blueprint(controller_user)
     app.register_blueprint(controller_auth)
 
