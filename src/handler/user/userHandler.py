@@ -6,53 +6,60 @@ from flask_bcrypt import Bcrypt
 from flask import current_app
 from src.repository.user.userRepository import UserRepository
 from src.infra.model.resultModel import ResultModel
+from src.contract.user.createUserContract import CreateUserContract
+from src.contract.user.updateUserContract import UpdateUserContract
+from src.contract.user.deleteUserContract import DeleteUserContract
+from src.contract.user.getByIdUserContract import GetByIdUserContract
+
 
 class UserHandler:
     def get_all_users(self):
         user = UserRepository()
         users = user.get_all()
         return users
-    
+
     def get_by_username(self, username):
         repository = UserRepository()
         user = repository.get_by_username(username)
         return user
 
     def get_by_id(self, _id):
+        contract = GetByIdUserContract()
+        if not(contract.validate(_id)):
+            return ResultModel('Envie todos parametros obrigatorios.', False, contract.errors).to_dict(), 406
         repository = UserRepository()
         user = repository.get_by_id(_id)
         return user
 
-    
     def create_user(self):
+        contract = CreateUserContract()
         playload = request.json
-        username = playload.get('username')
-        password = playload.get('password')
-        is_admin = playload.get('is_admin')
-        if not(username and password and type(is_admin) == bool):
-            return ResultModel('Envie todos parametros obrigatorios.', False, True).to_dict(), 406
+        if not(contract.validate(playload)):
+            return ResultModel('Envie todos parametros obrigatorios.', False, contract.errors).to_dict(), 406
         user = UserRepository()
-        new_user = user.create(username, password, is_admin)
+        new_user = user.create(playload.get('username'), playload.get(
+            'password'), playload.get('is_admin'))
         return new_user
 
-    def update_user(self):  
+    def update_user(self):
+        contract = UpdateUserContract()
         playload = request.json
-        username = playload.get('username')
-        password = playload.get('password')
-        is_admin = playload.get('is_admin')
-        _id = playload.get('id')
-        if not(username and password and type(is_admin) == bool and type(_id) == int):
-            return ResultModel('Envie todos parametros obrigatorios.', False, True).to_dict(), 406
+        if not(contract.validate(playload)):
+            return ResultModel('Envie todos parametros obrigatorios.', False, contract.errors).to_dict(), 406
         repository = UserRepository()
-        user = repository.update(_id, username, password, is_admin)
+        user = repository.update(
+            playload.get('id'),
+            playload.get('username'),
+            playload.get('password'),
+            playload.get('is_admin'))
         return user
 
     def delete_user(self):
+        contract = DeleteUserContract()
         playload = request.json
-        _id = playload.get('id')
-        if not(_id):
-            return ResultModel('O parametro "id" é obrigatorio.', False, True).to_dict(), 406
+        if not(contract.validate(playload)):
+            return ResultModel('Envie todos parametros obrigatorios.', False, contract.errors).to_dict(), 406
 
         repository = UserRepository()
-        user = repository.delete(_id)
+        user = repository.delete(playload.get('id'))
         return user

@@ -14,7 +14,7 @@ class User(db.Model):
     def __init__(self, username, password, is_admin):
         bcrypt = Bcrypt(current_app)
         self.username = username
-        self.password = bcrypt.generate_password_hash(password).decode('utf8')
+        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
         self.is_admin = is_admin
     
     def compare_password(self, password):

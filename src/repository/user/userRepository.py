@@ -67,7 +67,7 @@ class UserRepository:
                 return ResultModel('Usuario não existe.', False, True).to_dict()
             bcrypt = Bcrypt(current_app)
             user.username = username
-            user.password = bcrypt.generate_password_hash(password).decode('utf8')
+            user.password = bcrypt.generate_password_hash(password).decode('utf-8')
             user.is_admin = is_admin
             db.session.add(user)
             db.session.commit()

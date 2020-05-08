@@ -7,23 +7,21 @@ from flask_bcrypt import Bcrypt
 import datetime
 from src.infra.model.resultModel import ResultModel
 from src.repository.user.userRepository import UserRepository
+from src.contract.auth.loginCotract import LoginContract
 
 
 class AuthHandler:
     
     def post(self):
+        contract = LoginContract()
         playload = request.json
-        username = playload.get('username')
+        if not(contract.validate(playload)):
+            return ResultModel('Envie todos parametros obrigatorios.', False, contract.errors).to_dict(), 406
         password = playload.get('password')
-        
-        if not (username and password):
-            return ResultModel('Informe usuario e senha.', False, True).to_dict(), 406
-
         bcrypt = Bcrypt(current_app)
-        print(username, password)
-        crypt_password =  bcrypt.generate_password_hash(password).decode('utf8')
+        crypt_password =  bcrypt.generate_password_hash(password).decode('utf-8')
         repository = UserRepository()
-        user = repository.get_by_username(username, True)['data']
+        user = repository.get_by_username(playload.get('username'), True)['data']
         if not user:
             ResultModel('Usuario não existe.', False, True)
         if not user or not bcrypt.check_password_hash(user['password'], password):
